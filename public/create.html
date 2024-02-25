@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Upload</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
+    <script src="firebase.js"></script>
+</head>
+
+<body id="body">
+    <div>
+        <h2>Create a New Project</h2>
+        <form id="projectForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="organization">Organization:</label>
+            <input type="text" id="organization" required>
+
+            <label for="description">Description:</label>
+            <textarea rows="4" id="description" required></textarea>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" required>
+
+            <label for="media">Upload Media (Image/Video):</label>
+            <input type="file" accept="image/*,video/*" id="media" required>
+
+            <button type="button" onclick="uploadProject()">Upload Project</button>
+            <button type="button"><a href="index.html">Close</a></button>
+
+            <!-- Loading spinner -->
+            <div id="load" class="loading">
+                <span class="loader"></span>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        async function uploadProject() {
+            const name = document.getElementById('name').value;
+            const organization = document.getElementById('organization').value;
+            const description = document.getElementById('description').value;
+            const date = document.getElementById('date').value;
+            const mediaFile = document.getElementById('media').files[0];
+
+            // Check if all fields are filled
+            if (!name || !organization || !description || !date || !mediaFile) {
+                alert("Please fill in all fields and select a media file.");
+                return;
+            }
+
+            const mediaType = mediaFile.type.startsWith('image') ? 'image' : 'video'
+
+            // Upload media file to storage
+        try{
+            const loading = document.getElementById('load');
+            loading.style.display = 'block';
+            const storageRef = window.storage.ref(`${mediaType}/${mediaFile.name}`);
+            const mediaSnapshot = await storageRef.put(mediaFile);
+            const mediaURL = await mediaSnapshot.ref.getDownloadURL();
+
+            // Create project in Firestore
+            await window.firestore.collection('projects').add({
+                name,
+                organization,
+                description,
+                date,
+                mediaType,
+                mediaURL,
+            });
+            
+            loading.style.display = 'none';
+            alert("Project uploaded successfully!");
+            // Clear form after successful upload
+            document.getElementById('projectForm').reset();
+        }catch (error) {
+                alert('Error uploading project:', error);
+                alert("Error uploading project. Please try again.");
+        }finally{
+            loading.style.display = 'none';
+        }
+            
+        }
+    </script>
+</body>
+
+</html>

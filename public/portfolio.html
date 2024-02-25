@@ -1,0 +1,333 @@
+<!-- portfolio.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Include main Firebase script -->
+<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+
+<!-- Include compatibility scripts -->
+<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
+
+<!-- Include your Firebase configuration -->
+<script src="firebase.js"></script>
+
+</head>
+
+<body id="body">
+    <section id="wrapper">
+        <header id="header" id="home">
+            <div class="logo">
+                <img src="images/logo.png" class="icon1">
+                <div>
+                 <h2 id="topic"><b> Livewire Mashariki Studios </b></h2>
+                 <h3 id="topic1">CREATIVE MINDS, CREATIVE WORK</h3>
+                </div>
+            </div>
+            <mobilenav id="mobilenav">
+                <div class="mobile-menu-icon" onclick="toggleMobileMenu()">&#9776;</div>
+            </mobilenav>
+            <!-- Mobile Navigation Menu -->
+            <div class="mobile-menu">
+             <ul>
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="create.html" class="nav-link">Create</a></li>
+             </ul>
+            </div>
+            <nav> 
+                <ul id="navbar">
+                    <li><a href="index.html" id="home-link" class="nav-link"><b>Home</b></a></li>
+                    <li><a href="create.html" id="about-link" class="nav-link"><b>Create</b></a></li>
+                </ul>            
+            </nav>
+        </header>
+
+        <div id="tabs">
+            <button class="active" onclick="showTab('photos')">Photos</button>
+            <button onclick="showTab('videos')">Videos</button>
+        </div>
+
+        <!-- Loading spinner -->
+        <div id="ld" class="loading">
+            <span class="loader"></span>
+        </div>
+
+
+        <div id="content">
+            <div id="photoTab">
+                <!-- Render a grid of photos -->
+                <div class="gallery" id="photoGallery"></div>
+            </div>
+
+            <div id="videoTab">
+                <video id="videoPlayer" controls width="100%" height="360" poster="videoplayer.jpg">
+                    <!-- Video Player that plays selected video -->
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-metadata" id="videoMetadata"></div>
+                <h2 id="topic">Video Gallery</h2>
+                <div class="gallery" id="videoGallery"></div>
+            </div>
+
+            <div id="photoModal" class="modal">
+                <span class="close" onclick="closePhotoModal()">&times;</span>
+                <div class="modal-content-container">
+                    <img id="fullScreenPhoto" class="modal-content">
+                </div>
+                <div id="photoMetadata" class="metadata"></div>
+                <div class="navigation-buttons">
+                    <button class="prev" onclick="navigatePhoto(-1)">&#10094;</button>
+                    <button class="next" onclick="navigatePhoto(1)">&#10095;</button>
+                </div>
+            </div>
+           
+        </div>
+
+        <script>
+        // Function to switch between tabs
+        function showTab(tabName) {
+            const tabs = document.getElementById('tabs');
+            const buttons = tabs.getElementsByTagName('button');
+
+            // Hide all content divs
+            document.getElementById('photoTab').style.display = 'none';
+            document.getElementById('videoTab').style.display = 'none';
+
+            // Remove the 'active' class from all buttons
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+
+            // Display the content of the selected tab
+            if (tabName === 'photos') {
+                document.getElementById('photoTab').style.display = 'block';
+            } else if (tabName === 'videos') {
+                document.getElementById('videoTab').style.display = 'block';
+            }
+
+            // Add the 'active' class to the button that opened the tab
+            for (let i = 0; i < buttons.length; i++) {
+                if (buttons[i].innerHTML.toLowerCase() === tabName) {
+                    buttons[i].classList.add('active');
+                    break;
+                }
+            }
+        }
+
+            let projects = [];
+            const loading = document.getElementById('ld');
+            loading.style.display = 'flex';
+            // Function to fetch and display projects
+            async function fetchAndDisplayProjects() {
+                projects = [];
+
+                try {
+                    const projectsSnapshot = await window.firestore.collection('projects').get();
+
+                    projectsSnapshot.forEach((projectDoc) => {
+                        projects.push(projectDoc.data());
+                    });
+
+                    // Call the new function to display projects with updated data
+                    displayProjects(projects);
+                } catch (error) {
+                console.error('Error fetching projects:', error);
+                }
+            }
+
+
+            // Call the function to fetch and display projects
+            fetchAndDisplayProjects();
+
+            // Function to push additional default projects
+            function pushDefaultProjects() {
+                projects.push(
+                    {
+                        name: "Default Photo 1",
+                        organization: "Default Organization",
+                        description: "Default Photo Description",
+                        date: "2024-02-24",
+                        mediaType: "image",
+                        mediaURL: 'https://via.placeholder.com/1000'
+                    },
+                    {
+                        name: "Default Video 1",
+                        organization: "Default Organization",
+                        description: "Default Video Description",
+                        date: "2024-02-24",
+                        mediaType: "video",
+                        mediaURL: 'https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_2mb.mp4'
+                    }
+        
+                );
+            }
+
+            // Call the function to push additional default projects
+            pushDefaultProjects();
+
+
+
+            // Function to create and render photo elements with metadata
+            function createPhotoElements(projects) {
+                const photoGallery = document.getElementById('photoGallery');
+                photoGallery.innerHTML = ''; // Clear existing content
+
+                projects.forEach((projectData, index) => {
+                    const photoContainer = document.createElement('div');
+                    photoContainer.classList.add('gallery-item');
+
+                    const photoItem = document.createElement('img');
+                    photoItem.src = projectData.mediaURL;
+                    photoItem.setAttribute('data-index', index);
+                    photoItem.addEventListener('click', () => openPhotoModal(projectData));
+
+                    const metadataContainer = document.createElement('div');
+                    metadataContainer.classList.add('metadata-container');
+
+                    const projectName = document.createElement('p');
+                    projectName.classList.add('project-name');
+                    projectName.textContent = projectData.name;
+
+                    const projectDate = document.createElement('p');
+                    projectDate.classList.add('project-date');
+                    projectDate.textContent = projectData.date;
+
+                    metadataContainer.appendChild(projectName);
+                    metadataContainer.appendChild(projectDate);
+
+                    photoContainer.appendChild(photoItem);
+                    photoContainer.appendChild(metadataContainer);
+
+                    photoGallery.appendChild(photoContainer);
+                });
+            }
+
+            // Function to create and render video elements
+            function createVideoElements(videos) {
+                const videoGallery = document.getElementById('videoGallery');
+                videoGallery.innerHTML = ''; // Clear existing content
+
+                videos.forEach((videoData, index) => {
+                    const videoContainer = document.createElement('div');
+                    videoContainer.classList.add('video-container');
+
+                    const videoItem = document.createElement('video');
+                    videoItem.src = videoData.mediaURL;
+                    videoItem.setAttribute('data-index', index);
+                    videoItem.addEventListener('click', () => playSelectedVideo(videoData));
+
+                    videoContainer.appendChild(videoItem);
+                    videoGallery.appendChild(videoContainer);
+                });
+            }
+
+            // Function to display projects based on media type
+            function displayProjects(projects) {
+                const photoProjects = projects.filter(project => project.mediaType === 'image');
+                const videoProjects = projects.filter(project => project.mediaType === 'video');
+
+                // Call functions to create elements with updated data
+                createPhotoElements(photoProjects);
+                createVideoElements(videoProjects);
+            }
+
+            setTimeout(function () {
+                loading.style.display = 'none';
+            }, 2000)
+            
+            // Function to open the photo modal with enhanced metadata display
+            function openPhotoModal(projectData) {
+                const fullScreenPhoto = document.getElementById('fullScreenPhoto');
+                fullScreenPhoto.src = projectData.mediaURL;
+
+                const photoMetadata = document.getElementById('photoMetadata');
+                photoMetadata.innerHTML = `<div class="modal-metadata">
+                                  <p class="modal-project-name">${projectData.name}</p>
+                                  <p class="modal-project-organization">${projectData.organization}</p>
+                                  <p class="modal-project-description">${projectData.description}</p>
+                                  <p class="modal-project-date">${projectData.date}</p>
+                                </div>`;
+
+                const photoModal = document.getElementById('photoModal');
+                photoModal.style.display = 'block';
+            }
+
+
+            // Function to close the photo modal
+            function closePhotoModal() {
+                const photoModal = document.getElementById('photoModal');
+                photoModal.style.display = 'none';
+            }
+
+            // Function to navigate between photos in modal
+            function navigatePhoto(step) {
+                const fullScreenPhoto = document.getElementById('fullScreenPhoto');
+                const currentPhotoIndex = projects.findIndex(project => project.mediaURL === fullScreenPhoto.src);
+
+                const nextPhotoIndex = (currentPhotoIndex + step + projects.length) % projects.length;
+
+                fullScreenPhoto.src = projects[nextPhotoIndex].mediaURL;
+
+                const photoMetadata = document.getElementById('photoMetadata');
+                photoMetadata.innerHTML = `${projects[nextPhotoIndex].name}<br>
+                                       ${projects[nextPhotoIndex].organization}<br>
+                                       ${projects[nextPhotoIndex].description}<br>
+                                       ${projects[nextPhotoIndex].date}`;
+            }
+
+            // Function to play the selected video in the video tab
+            function playSelectedVideo(videoData) {
+                const videoPlayer = document.getElementById('videoPlayer');
+                videoPlayer.src = videoData.mediaURL;
+                videoPlayer.load();  // Reload the video to play the selected one
+                videoPlayer.play();
+
+                const videoMetadata = document.getElementById('videoMetadata');
+                videoMetadata.innerHTML = `<strong>Name:</strong> ${videoData.name}<br>
+                               <strong>Organization:</strong> ${videoData.organization}<br>
+                               <strong>Description:</strong> ${videoData.description}<br>
+                               <strong>Date:</strong> ${videoData.date}`;
+}
+
+
+
+            // Function to toggle the mobile menu
+            function toggleMobileMenu() {
+                var mobileMenu = document.querySelector('.mobile-menu');
+                var currentDisplay = window.getComputedStyle(mobileMenu).display;
+
+                if (currentDisplay === 'none' || currentDisplay === '') {
+                    mobileMenu.style.display = 'block';
+                } else {
+                    mobileMenu.style.display = 'none';
+                }
+            }
+
+            // Function to close the mobile menu
+            function closeMobileMenu() {
+                var mobileMenu = document.querySelector('.mobile-menu');
+                mobileMenu.style.display = 'none';
+            }
+
+            // Add this event listener to close the mobile menu when clicking outside
+            window.addEventListener('click', function(event) {
+                var mobileMenu = document.querySelector('.mobile-menu');
+                if (!event.target.matches('.mobile-menu-icon') && !event.target.closest('.mobile-menu')) {
+                    mobileMenu.style.display = 'none';
+                }
+            });
+
+            // default active tab
+            showTab('photos');
+        </script>
+    </section>
+</body>
+
+</html>
