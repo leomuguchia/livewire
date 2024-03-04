@@ -48,14 +48,14 @@ body {
     font-family: sans-serif, 'Arial';
     background-color: black;
     color: #fff;
-    background: url('images/camera.avif') center/cover fixed no-repeat;
+    background: url('images/camera.jpg') center/cover fixed no-repeat;
 }
 
-@media not all and (min-width: 0px) {
-    body {
-        background-color: black;
-    }
-}
+/* Fallback for devices unable to load background image */
+/* body:not(:has(> *:empty)) { */
+    /* background: black; */
+/* } */
+
 
 #wrapper {
     background-color: rgba(0,0,0,0.8);
