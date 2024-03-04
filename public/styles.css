@@ -50,6 +50,13 @@ body {
     color: #fff;
     background: url('images/camera.avif') center/cover fixed no-repeat;
 }
+
+@media not all and (min-width: 0px) {
+    body {
+        background-color: black;
+    }
+}
+
 #wrapper {
     background-color: rgba(0,0,0,0.8);
     position: absolute;
