@@ -50,13 +50,6 @@ body {
     color: #fff;
     background: url('images/camera.jpg') center/cover fixed no-repeat;
 }
-
-/* Fallback for devices unable to load background image */
-/* body:not(:has(> *:empty)) { */
-    /* background: black; */
-/* } */
-
-
 #wrapper {
     background-color: rgba(0,0,0,0.8);
     position: absolute;
@@ -69,8 +62,11 @@ body {
 }
 .about-image{
     width: 40%;
-    height: 40%;
+    height: 50%;
     align-self: center;
+    /* border: 2px solid rgb(252, 97, 0); */
+    /* border-radius: 100%;
+    box-shadow: 0 0 4px  rgb(252, 97, 0) */
 }
 #navbar {
     display: none;
