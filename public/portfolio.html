@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="images/favicon.png" type="image/png">
     <!-- Include main Firebase script -->
 <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
 
@@ -91,12 +92,6 @@
         </div>
 
         <script>
-            // Check if the page is accessed directly
-        if (window.location.href.indexOf("portfolio.html") > -1) {
-            // Redirect the user to the homepage
-            window.location.href = "index.html";
-        }
-
         // Function to switch between tabs
         function showTab(tabName) {
             const tabs = document.getElementById('tabs');
