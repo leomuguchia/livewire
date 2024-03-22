@@ -6,25 +6,9 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      },
-      {
-        "source": "/create.html",
-        "destination": "/index.html",
-        "type": 301
-      }
-    ],
     "redirects": [
       {
         "source": "/",
-        "destination": "/404.html",
-        "type": 301
-      },
-      {
-        "source": "/portfolio.html",
         "destination": "/index.html",
         "type": 301
       }
