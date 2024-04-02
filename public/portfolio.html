@@ -321,7 +321,13 @@
             });
 
             // default active tab
-            showTab('photos');
+            const urlParams = new URLSearchParams(window.location.search);
+            const defaultTab = urlParams.get('defaultTab');
+            if (defaultTab) {
+                showTab(defaultTab);
+            } else {
+                showTab('photos'); // Default tab if no parameter is provided
+            }
         </script>
     </section>
 </body>
