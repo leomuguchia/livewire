@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Livewire Mashariki Studios</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="images/favicon.png" type="image/png">
+    <style>
+        .about-section {
+            padding: 50px;
+            background-color: #f8f8f8;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .about-section h2 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .about-section p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .mission-vision {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+
+        .mission-vision-item {
+            width: 48%;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .mission-vision-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .mission-vision-item h3 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .mission-vision-item p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body id="body">
+    <header>
+        <div class="logo">
+            <img src="images/logo.png" class="icon1">
+            <div>
+                <h2 id="topic"><b> Livewire Mashariki Studios </b></h2>
+                <h3 id="topic1">CREATIVE MINDS, CREATIVE WORK</h3>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="about-section">
+        <button onclick="goBack()" class="button">Back</button>
+            <h2>About Livewire Mashariki Studios</h2>
+            <p>Livewire Mashariki Studios is a premier media production company dedicated to crafting compelling stories and delivering impactful content. With a focus on innovation and creativity, we strive to push the boundaries of visual storytelling and leave a lasting impression on our audience.</p>
+            <div class="mission-vision">
+                <div class="mission-vision-item">
+                    <h3>Our Mission</h3>
+                    <p>Our mission is to empower individuals, amplify diverse voices, and inspire positive change through the power of media. We believe in the transformative power of storytelling and aim to create content that resonates with our audience on a deep and meaningful level.</p>
+                </div>
+                <div class="mission-vision-item">
+                    <h3>Our Vision</h3>
+                    <p>Our vision is to be a catalyst for social impact and cultural transformation. We envision a world where every story is heard, every voice is valued, and every individual is empowered to create change. Through our work, we strive to build a more inclusive and equitable society for all.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+
+</html>

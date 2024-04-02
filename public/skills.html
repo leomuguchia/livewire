@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Livewire Mashariki Studios</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="images/favicon.png" type="image/png">
+    <style>
+        .about-section {
+            padding: 50px;
+            background-color: #f8f8f8;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            height: auto;
+        }
+
+        .about-section h2 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .about-section p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .mission-vision {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 50px;
+            border: 2px solid white;
+            padding: 20px;
+        }
+
+        .mission-vision-item {
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .mission-vision-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .mission-vision-item h3 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .mission-vision-item p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #666;
+        }
+
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body id="body">
+    <header>
+        <div class="logo">
+            <img src="images/logo.png" class="icon1">
+            <div>
+                <h2 id="topic"><b> Livewire Mashariki Studios </b></h2>
+                <h3 id="topic1">CREATIVE MINDS, CREATIVE WORK</h3>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="about-section">
+            <button onclick="goBack()" class="button">Back</button>
+            <h2>About Livewire Mashariki Studios</h2>
+            <p>Livewire Mashariki Studios is a premier media production company dedicated to crafting compelling stories and delivering impactful content. With a focus on innovation and creativity, we strive to push the boundaries of visual storytelling and leave a lasting impression on our audience.</p>
+            <div class="mission-vision">
+                <div class="mission-vision-item">
+                    <h3>TV Commercials</h3>
+                    <p>Step into the spotlight where brands shine and stories unfold in the blink of an eye. Our commercial maestros craft campaigns that captivate audiences, leaving an indelible mark on their hearts and minds. From concept to execution, we blend creativity with strategy to deliver commercials that resonate, inspire, and drive action.</p>
+                </div>
+                <div class="mission-vision-item">
+                    <h3>Documentaries</h3>
+                    <p>Peel back the layers of truth and dive into the heart of reality with our documentary expertise. We uncover untold stories, amplify marginalized voices, and shed light on pressing issues that shape our world. Through meticulous research and compelling storytelling, our documentaries provoke thought, evoke empathy, and spark meaningful dialogue.</p>
+                </div>
+                <div class="mission-vision-item">
+                    <h3>Post Production</h3>
+                    <p>Enter the realm of post-production where raw footage transforms into cinematic gold. Our editing wizards wield digital brushes to sculpt narratives, infusing visuals with emotion and depth. From color grading to sound design, every element is meticulously crafted to elevate the viewer's experience and leave a lasting impression.</p>
+                </div>
+                <div class="mission-vision-item">
+                    <h3>Livestreaming</h3>
+                    <p>Break the barriers of time and space with the magic of livestreaming. From electrifying concerts to exclusive product launches, we bring events to life in real-time, engaging audiences worldwide. With seamless integration of cutting-edge technology and creative flair, we transform screens into portals of connection and excitement.</p>
+                </div>
+                <div class="mission-vision-item">
+                    <h3>Photography</h3>
+                    <p>Embark on a visual journey where every click freezes a moment in time, preserving memories that last a lifetime. Our photographers are not just observers; they are storytellers who paint with light, capturing the essence of each subject in vivid detail. From candid portraits to sweeping landscapes, our lens breathes life into every frame.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+
+</html>
