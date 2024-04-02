@@ -9,6 +9,7 @@
     <title>Portfolio</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="images/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Include main Firebase script -->
 <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
 
@@ -125,26 +126,34 @@
             let projects = [];
             const loading = document.getElementById('ld');
             loading.style.display = 'flex';
+
             // Function to fetch and display projects
             async function fetchAndDisplayProjects() {
                 projects = [];
+                let enableDelete = false; 
+
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('enableDelete')) {
+                    enableDelete = urlParams.get('enableDelete') === 'true'; 
+                }
 
                 try {
                     const projectsSnapshot = await window.firestore.collection('projects').get();
 
                     projectsSnapshot.forEach((projectDoc) => {
-                        projects.push(projectDoc.data());
+                        const project = {
+                            id: projectDoc.id,
+                            ...projectDoc.data()
+                        };
+                        projects.push(project);
                     });
 
-                    // Call the new function to display projects with updated data
-                    displayProjects(projects);
+                    displayProjects(projects, enableDelete);
                 } catch (error) {
-                console.error('Error fetching projects:', error);
-                }
+                    console.error('Error fetching projects:', error);
+                }       
             }
 
-
-            // Call the function to fetch and display projects
             fetchAndDisplayProjects();
 
             // Function to push additional default projects
@@ -172,9 +181,8 @@
             pushDefaultProjects();
 
 
-
             // Function to create and render photo elements with metadata
-            function createPhotoElements(projects) {
+            function createPhotoElements(projects, enableDelete) {
                 const photoGallery = document.getElementById('photoGallery');
                 photoGallery.innerHTML = ''; // Clear existing content
 
@@ -198,43 +206,139 @@
                     projectDate.classList.add('project-date');
                     projectDate.textContent = projectData.date;
 
+                    // Create delete icon
+                    const deleteIcon = document.createElement('i');
+                    deleteIcon.classList.add('fas', 'fa-trash-alt');
+
+                    // Create delete button and append delete icon
+                    const deleteButton = document.createElement('button');
+                    deleteButton.classList.add('delete-button');
+                    deleteButton.appendChild(deleteIcon);
+                    deleteButton.addEventListener('click', () => deleteProject(projectData));
+
+                    // Append project name and date to metadata container
                     metadataContainer.appendChild(projectName);
                     metadataContainer.appendChild(projectDate);
+
+                    // Append delete button to metadata container if enabled
+                    if (enableDelete) {
+                        metadataContainer.appendChild(deleteButton);
+                    }
 
                     photoContainer.appendChild(photoItem);
                     photoContainer.appendChild(metadataContainer);
 
                     photoGallery.appendChild(photoContainer);
+
+                    // Enable delete button if specified
+                    if (enableDelete) {
+                        deleteButton.disabled = false;
+                        deleteButton.style.visibility = 'visible';
+                    } else {
+                        deleteButton.disabled = true;
+                        deleteButton.style.visibility = 'hidden';
+                    }
                 });
             }
 
             // Function to create and render video elements
-            function createVideoElements(videos) {
+            function createVideoElements(videos, enableDelete) {
                 const videoGallery = document.getElementById('videoGallery');
                 videoGallery.innerHTML = ''; // Clear existing content
 
                 videos.forEach((videoData, index) => {
                     const videoContainer = document.createElement('div');
-                    videoContainer.classList.add('video-container');
+                    videoContainer.classList.add('gallery-item'); // Match the class of photo container
 
                     const videoItem = document.createElement('video');
                     videoItem.src = videoData.mediaURL;
                     videoItem.setAttribute('data-index', index);
                     videoItem.addEventListener('click', () => playSelectedVideo(videoData));
 
+                    const metadataContainer = document.createElement('div');
+                    metadataContainer.classList.add('metadata-container');
+
+                    const projectName = document.createElement('p');
+                    projectName.classList.add('project-name');
+                    projectName.textContent = videoData.name;
+
+                    const projectDate = document.createElement('p');
+                    projectDate.classList.add('project-date');
+                    projectDate.textContent = videoData.date;
+
+                    // Create delete icon
+                    const deleteIcon = document.createElement('i');
+                    deleteIcon.classList.add('fas', 'fa-trash-alt');
+
+                    // Create delete button and append delete icon
+                    const deleteButton = document.createElement('button');
+                    deleteButton.classList.add('delete-button');
+                    deleteButton.appendChild(deleteIcon);
+                    deleteButton.addEventListener('click', () => deleteProject(videoData));
+
+                    // Append project name and date to metadata container
+                    metadataContainer.appendChild(projectName);
+                    metadataContainer.appendChild(projectDate);
+
+                    // Append delete button to metadata container if enabled
+                    if (enableDelete) {
+                        metadataContainer.appendChild(deleteButton);
+                    }
+
+                    // Append video item and metadata container to the video container
                     videoContainer.appendChild(videoItem);
+                    videoContainer.appendChild(metadataContainer);
+
+                    // Append video container to the video gallery
                     videoGallery.appendChild(videoContainer);
+
+                    // Enable delete button if specified
+                    if (enableDelete) {
+                        deleteButton.disabled = false;
+                        deleteButton.style.visibility = 'visible';
+                    } else {
+                        deleteButton.disabled = true;
+                        deleteButton.style.visibility = 'hidden';
+                    }
                 });
+}
+
+
+            // Function to delete a project
+            async function deleteProject(projectData) {
+                // Confirm with the user before deleting
+                if (confirm(`Are you sure you want to delete ${projectData.name}?`)) {
+                    // Find the index of the project in the projects array
+                    const index = projects.findIndex(project => project.name === projectData.name);
+
+                    // If the project is found in the array, remove it
+                    if (index !== -1) {
+                        projects.splice(index, 1); // Remove the project from the array
+                        createPhotoElements(projects); // Re-render the photo elements
+
+                        // Delete the project from Firestore
+                        try {
+                            await window.firestore.collection('projects').doc(projectData.id).delete();
+                            console.log(`Project ${projectData.name} successfully deleted from Firestore.`);
+                        } catch (error) {
+                            console.error('Error deleting project from Firestore:', error);
+                            alert('Error deleting project from Firestore. Please try again.');
+                        }
+                    } else {
+                        console.error('Project not found in array:', projectData);
+                    }
+                }
             }
 
+
             // Function to display projects based on media type
-            function displayProjects(projects) {
+            function displayProjects(projects, enableDelete) {
                 const photoProjects = projects.filter(project => project.mediaType === 'image');
                 const videoProjects = projects.filter(project => project.mediaType === 'video');
 
                 // Call functions to create elements with updated data
-                createPhotoElements(photoProjects);
-                createVideoElements(videoProjects);
+                createPhotoElements(photoProjects, enableDelete);
+                createVideoElements(videoProjects, enableDelete);
             }
 
             setTimeout(function () {

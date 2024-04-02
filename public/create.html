@@ -15,6 +15,7 @@
 </head>
 
 <body id="body">
+    
     <div>
         <h2>Create New Projects</h2>
         <form id="projectForm">
@@ -25,6 +26,7 @@
             <button type="button" onclick="addProject()">Add Project</button>
             <button type="button" onclick="uploadProjects()">Upload Projects</button>
             <button type="button" onclick="signOut()">Sign Out</button>
+            <button type="button" onclick="edit()">Manage projects</button>
             <button type="button"><a href="index.html">Close</a></button>
 
             <!-- Loading spinner -->
@@ -169,6 +171,11 @@
             const projectDiv = button.parentNode;
             projectDiv.remove();
             projectCount--;
+        }
+
+        function edit(){
+            // Redirect to portfolio page with query parameter to enable delete icons
+            window.location.href = `portfolio.html?enableDelete=true`;
         }
 
         async function uploadProjects() {

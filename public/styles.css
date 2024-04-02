@@ -483,6 +483,16 @@ body {
     justify-content: center;
 }
 
+.delete-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: red; 
+    font-size: 16px; 
+}
+
+
+
 .modal-project-name {
     font-size: 24px;
     font-weight: bold;
