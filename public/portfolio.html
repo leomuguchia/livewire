@@ -152,15 +152,13 @@
                 projects.push(
                     {
                         name: "Default Photo 1",
-                        organization: "Default Organization",
-                        description: "Default Photo Description",
+                        description: "Default Photo DescriptionDefault Photo DescriptionDefault Photo DescriptionDefault Photo Description",
                         date: "2024-02-24",
                         mediaType: "image",
                         mediaURL: 'https://via.placeholder.com/1000'
                     },
                     {
                         name: "Default Video 1",
-                        organization: "Default Organization",
                         description: "Default Video Description",
                         date: "2024-02-24",
                         mediaType: "video",
@@ -251,7 +249,6 @@
                 const photoMetadata = document.getElementById('photoMetadata');
                 photoMetadata.innerHTML = `<div class="modal-metadata">
                                   <p class="modal-project-name">${projectData.name}</p>
-                                  <p class="modal-project-organization">${projectData.organization}</p>
                                   <p class="modal-project-description">${projectData.description}</p>
                                   <p class="modal-project-date">${projectData.date}</p>
                                 </div>`;
@@ -277,11 +274,12 @@
                 fullScreenPhoto.src = projects[nextPhotoIndex].mediaURL;
 
                 const photoMetadata = document.getElementById('photoMetadata');
-                photoMetadata.innerHTML = `${projects[nextPhotoIndex].name}<br>
-                                       ${projects[nextPhotoIndex].organization}<br>
-                                       ${projects[nextPhotoIndex].description}<br>
-                                       ${projects[nextPhotoIndex].date}`;
-            }
+                photoMetadata.innerHTML = `<div class="modal-metadata">
+                                <p class="modal-project-name">${projects[nextPhotoIndex].name}</p>
+                                <p class="modal-project-description">${projects[nextPhotoIndex].description}</p>
+                                <p class="modal-project-date">${projects[nextPhotoIndex].date}</p>
+                              </div>`;
+}
 
             // Function to play the selected video in the video tab
             function playSelectedVideo(videoData) {
@@ -292,12 +290,9 @@
 
                 const videoMetadata = document.getElementById('videoMetadata');
                 videoMetadata.innerHTML = `<strong>Name:</strong> ${videoData.name}<br>
-                               <strong>Organization:</strong> ${videoData.organization}<br>
                                <strong>Description:</strong> ${videoData.description}<br>
                                <strong>Date:</strong> ${videoData.date}`;
 }
-
-
 
             // Function to toggle the mobile menu
             function toggleMobileMenu() {

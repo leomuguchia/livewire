@@ -16,79 +16,222 @@
 
 <body id="body">
     <div>
-        <h2>Create a New Project</h2>
+        <h2>Create New Projects</h2>
         <form id="projectForm">
-            <label for="name">Name:</label>
-            <input type="text" id="name" required>
+            <div id="projectInputs">
+                <!-- Project inputs will be dynamically added here -->
+            </div>
 
-            <label for="organization">Organization:</label>
-            <input type="text" id="organization" required>
-
-            <label for="description">Description:</label>
-            <textarea rows="4" id="description" required></textarea>
-
-            <label for="date">Date:</label>
-            <input type="date" id="date" required>
-
-            <label for="media">Upload Media (Image/Video):</label>
-            <input type="file" accept="image/*,video/*" id="media" required>
-
-            <button type="button" onclick="uploadProject()">Upload Project</button>
+            <button type="button" onclick="addProject()">Add Project</button>
+            <button type="button" onclick="uploadProjects()">Upload Projects</button>
+            <button type="button" onclick="signOut()">Sign Out</button>
             <button type="button"><a href="index.html">Close</a></button>
 
             <!-- Loading spinner -->
-            <div id="load" class="loading">
-                <span class="loader"></span>
+            <div id="load" class="loading" style="display: none;">
+                <div id="progressText">0 of 0</div>
+                <div class="loader"></div>
             </div>
+
+            <!-- Background overlay -->
+            <div id="overlay" class="overlay" style="display: none;"></div>
         </form>
     </div>
 
-    <script>
-        async function uploadProject() {
-            const name = document.getElementById('name').value;
-            const organization = document.getElementById('organization').value;
-            const description = document.getElementById('description').value;
-            const date = document.getElementById('date').value;
-            const mediaFile = document.getElementById('media').files[0];
+    <div id="signInModal" class="modal1" style="display: none;">
+        <div class="sign">
+            <h2>Please Sign In</h2>
+            <span class="close" onclick="goBack()">&times;</span>
+            <form id="signInForm">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+                <button type="button" onclick="signIn()">Sign In</button>
+            </form>
+        </div>
+    </div>
 
-            // Check if all fields are filled
-            if (!name || !organization || !description || !date || !mediaFile) {
-                alert("Please fill in all fields and select a media file.");
+    <script>
+        window.addEventListener('DOMContentLoaded', checkAuth);
+
+        function checkAuth() {
+            firebase.auth().onAuthStateChanged(function (user) {
+                if (user) {
+                    // User is signed in, show project form
+                    document.getElementById('projectForm').style.display = 'block';
+                } else {
+                    // No user is signed in, show sign in modal
+                    document.getElementById('signInModal').style.display = 'block';
+                    document.getElementById('overlay').style.display = 'block';
+                }
+            });
+        }
+
+        function goBack() {
+            window.location.href = "index.html";
+        }
+
+        function closeSignInModal() {
+            document.getElementById('signInModal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function signIn() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Validate email format
+            if (!validateEmail(email)) {
+                alert('Invalid email format.');
                 return;
             }
 
-            const mediaType = mediaFile.type.startsWith('image') ? 'image' : 'video'
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed in
+                    closeSignInModal();
+                })
+                .catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    if (errorCode === 'auth/wrong-password') {
+                        alert('Wrong password.');
+                    } else if (errorCode === 'auth/user-not-found') {
+                        alert('User not found.');
+                    } else if (errorCode === 'auth/invalid-email') {
+                        alert('Invalid email format.');
+                    } else {
+                        alert(errorMessage);
+                    }
+                });
+        }
 
-            // Upload media file to storage
-        try{
-            const loading = document.getElementById('load');
-            loading.style.display = 'block';
-            const storageRef = window.storage.ref(`${mediaType}/${mediaFile.name}`);
-            const mediaSnapshot = await storageRef.put(mediaFile);
-            const mediaURL = await mediaSnapshot.ref.getDownloadURL();
-
-            // Create project in Firestore
-            await window.firestore.collection('projects').add({
-                name,
-                organization,
-                description,
-                date,
-                mediaType,
-                mediaURL,
+        function signOut() {
+            firebase.auth().signOut().then(() => {
+                // Sign-out successful.
+                location.reload(); // Refresh the page after signing out
+            }).catch((error) => {
+                // An error happened.
+                console.error('Error signing out:', error.message);
+                alert('Error signing out. Please try again.');
             });
-            
-            loading.style.display = 'none';
-            alert("Project uploaded successfully!");
-            // Clear form after successful upload
-            document.getElementById('projectForm').reset();
-        }catch (error) {
-                alert('Error uploading project:', error);
-                alert("Error uploading project. Please try again.");
-        }finally{
-            loading.style.display = 'none';
         }
-            
+
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
         }
+
+
+        window.addEventListener('DOMContentLoaded', addProject);
+        let projectCount = 0;
+
+        function addProject() {
+            if (projectCount < 10) {
+                projectCount++;
+                const projectInputs = document.getElementById('projectInputs');
+
+                const projectHTML = `
+                    <div class="project">
+                        <div class="cont">
+                            <label for="name${projectCount}">Name:</label>
+                            <input type="text" id="name${projectCount}" required>
+                        </div>
+
+                        <div class="cont">
+                            <label for="description${projectCount}">Description:</label>
+                            <textarea rows="4" id="description${projectCount}" required></textarea>
+                        </div>
+
+                        <div class="cont">
+                            <label for="date${projectCount}">Date:</label>
+                            <input type="date" id="date${projectCount}" required>
+                        </div>
+
+                        <div class="cont">
+                            <label for="media${projectCount}">Image/Video:</label>
+                            <input type="file" accept="image/*,video/*" id="media${projectCount}" required>
+                        </div>
+
+                        <button onclick="deleteProject(this)">Delete</button>
+                    </div>
+                `;
+
+
+                projectInputs.insertAdjacentHTML('beforeend', projectHTML);
+            } else {
+                alert("Maximum project limit reached (10 projects).");
+            }
+        }
+        
+        function deleteProject(button) {
+            const projectDiv = button.parentNode;
+            projectDiv.remove();
+            projectCount--;
+        }
+
+        async function uploadProjects() {
+            const projectCount = document.querySelectorAll('.project').length;
+            let projectsUploaded = 0;
+
+            const loading = document.getElementById('load');
+            const progressText = document.getElementById('progressText');
+            const overlay = document.getElementById('overlay');
+
+            
+            for (let i = 1; i <= projectCount; i++) {
+                const name = document.getElementById(`name${i}`).value;
+                const description = document.getElementById(`description${i}`).value;
+                const date = document.getElementById(`date${i}`).value;
+                const mediaFile = document.getElementById(`media${i}`).files[0];
+
+                if (!name || !description || !date || !mediaFile) {
+                    alert("Please fill in all fields and select a media file for each project.");
+                    return;
+                }
+
+                // Display the loading spinner and overlay
+                loading.style.display = 'block';
+                overlay.style.display = 'block';
+
+                const mediaType = mediaFile.type.startsWith('image') ? 'image' : 'video';
+
+                try {
+                    const storageRef = window.storage.ref(`${mediaType}/${mediaFile.name}`);
+                    const mediaSnapshot = await storageRef.put(mediaFile);
+                    const mediaURL = await mediaSnapshot.ref.getDownloadURL();
+
+                    // Create project in Firestore
+                    await window.firestore.collection('projects').add({
+                        name,
+                        description,
+                        date,
+                        mediaType,
+                        mediaURL,
+                    });
+
+                    projectsUploaded++;
+                    const progress = `${projectsUploaded} of ${projectCount}`;
+
+                    // Update progress text
+                    progressText.textContent = progress;
+
+                    // Hide loading spinner and overlay when all projects are uploaded
+                    if (projectsUploaded === projectCount) {
+                        loading.style.display = 'none';
+                        overlay.style.display = 'none';
+                        alert("All projects uploaded successfully!");
+                        document.getElementById('projectForm').reset();
+                    }
+                } catch (error) {
+                    console.error('Error uploading project:', error.message);
+                    alert("Error uploading projects. Please try again.");
+                    return;
+                }
+            }
+        }
+        
     </script>
 </body>
 
