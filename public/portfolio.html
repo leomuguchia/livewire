@@ -310,16 +310,11 @@
                 if (confirm(`Are you sure you want to delete ${projectData.name}?`)) {
                     // Find the index of the project in the projects array
                     const index = projects.findIndex(project => project.name === projectData.name);
-
-                    // If the project is found in the array, remove it
                     if (index !== -1) {
-                        projects.splice(index, 1); // Remove the project from the array
-                        createPhotoElements(projects); // Re-render the photo elements
-
-                        // Delete the project from Firestore
                         try {
                             await window.firestore.collection('projects').doc(projectData.id).delete();
-                            console.log(`Project ${projectData.name} successfully deleted from Firestore.`);
+                            alert(`Project ${projectData.name} successfully deleted from Firestore.`);
+                            fetchAndDisplayProjects()
                         } catch (error) {
                             console.error('Error deleting project from Firestore:', error);
                             alert('Error deleting project from Firestore. Please try again.');
@@ -329,7 +324,6 @@
                     }
                 }
             }
-
 
             // Function to display projects based on media type
             function displayProjects(projects, enableDelete) {
@@ -430,7 +424,7 @@
             if (defaultTab) {
                 showTab(defaultTab);
             } else {
-                showTab('photos'); // Default tab if no parameter is provided
+                showTab('photos'); 
             }
         </script>
     </section>
