@@ -87,9 +87,9 @@ body {
     font-family: sans-serif;
 }
 .logo img{
-    width:10vw;
+    width:8vw;
     height: 8vw;
-    margin-right: 10px;
+    margin-right: 10px; margin-top: 10px;
 }
 
 /* Mobile Menu Styles (hidden by default) */
@@ -653,7 +653,7 @@ body {
     }
     .bd1 {
         width: 50%;
-        padding:0px 20px;
+        /* padding:0px 10px; */
         /* text-wrap: 100px; */
         display: flex;
         /* word-wrap: break-word; */
